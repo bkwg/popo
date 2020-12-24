@@ -2,9 +2,8 @@
 #include <Zydis/Zydis.h>
 #include "disas.h"
 
-
-int disassemble(ADDRESS pc, char buffer[]) {
-
+int disassemble(ADDRESS pc, char buffer[])
+{
     ZyanU8* data;
     data = (ZyanU8*)buffer;
 
@@ -14,7 +13,6 @@ int disassemble(ADDRESS pc, char buffer[]) {
     ZydisFormatter formatter = { 0 };
     ZydisFormatterInit(&formatter, ZYDIS_FORMATTER_STYLE_INTEL);
 
-
     ZyanU64 runtime_address = pc;
     ZyanUSize offset = 0;
 
@@ -22,17 +20,18 @@ int disassemble(ADDRESS pc, char buffer[]) {
     ZydisDecodedInstruction insn;
 
     char insn_buffer[256];
+
     if (ZYAN_SUCCESS(ZydisDecoderDecodeBuffer(&decoder, data + offset, length - offset,
         &insn)))
     {
-        printf("%016lx ", runtime_address);
+        printf("%016lx\t", runtime_address);
         ZydisFormatterFormatInstruction(&formatter, &insn, insn_buffer, sizeof(insn_buffer),\
             runtime_address);
 
         puts(insn_buffer);
 
-        offset += insn.length;
-        runtime_address += insn.length;
+        //offset += insn.length;
+        //runtime_address += insn.length;
     }
 
     return 0;

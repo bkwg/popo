@@ -10,15 +10,23 @@
 #include "debug.h"
 #include "disas.h"
 
+static unsigned long long int g_insn_counter = 0;
 
-static unsigned int g_insn_counter = 0;
+void attach_target(pid_t pid)
+{
+    if (ptrace(PTRACE_ATTACH, pid, 0, 0) == -1)
+    {
+        perror("ptrace ATTACH");
+        return;
+    }
+}
 
 void run_target(const char* target_name)
 {
     // all other flags are ignored
-    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0)
+    if (ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
     {
-        perror("ptrace");
+        perror("ptrace TRACEME");
         return;
     }
 
@@ -31,7 +39,7 @@ void run_target(const char* target_name)
     }
 }
 
-void increment_insn_count()
+void increment_insn_count(void)
 {
     ++g_insn_counter;
 }
@@ -67,7 +75,7 @@ int handle_child_signal(pid_t child, siginfo_t *infop)
 
             if (ptrace(PTRACE_SINGLESTEP, child, 0, 0) == -1)
             {
-                perror("ptrace");
+                perror("ptrace SINGLESTEP");
                 return FAILED;
             }
             break;
@@ -78,7 +86,7 @@ int handle_child_signal(pid_t child, siginfo_t *infop)
             printf("child %d stopped by signal %d\n", infop->si_pid, infop->si_status);
             break;
         case CLD_EXITED:
-            printf("child %d exited with status %d\n", infop->si_pid, infop->si_status);
+            printf("\n[+] Process '%d' exited with status %d\n", infop->si_pid, infop->si_status);
             break;
         case CLD_KILLED:
             printf("child %d killed by signal %d\n", infop->si_pid, infop->si_status);
@@ -97,6 +105,7 @@ int trace_child(pid_t child)
 {
     siginfo_t infop = { 0 };
 
+    printf("[+] Starting disassembling\n");
     do
     {
         if (waitid(P_PID, child, &infop, WSTOPPED | WCONTINUED | WEXITED) != 0)
@@ -111,6 +120,6 @@ int trace_child(pid_t child)
         && (infop.si_code != CLD_EXITED)
         && (infop.si_code != CLD_DUMPED));
 
-    printf(">>> insn_count %d\n", g_insn_counter);
+    printf("[RESULT] Instructions executed: %llu\n", g_insn_counter);
     return SUCCEED;
 }

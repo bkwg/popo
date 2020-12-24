@@ -8,5 +8,6 @@
 
 int trace_child(pid_t child);
 void run_target(const char* target_name);
+void attach_target(pid_t pid);
 
 #endif /* ! DEBUG_H */
