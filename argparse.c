@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <errno.h>
 #include "argparse.h"
 
@@ -115,7 +114,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
             argparse_error(self, opt, "expects a numerical value", flags);
         break;
     default:
-        assert(0);
+        exit(0);
     }
 
 skipped:

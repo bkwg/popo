@@ -1,8 +1,9 @@
 #ifndef DISAS_H
 #define DISAS_H
 
-typedef long ADDRESS;
+#include "popo_types.h"
 
-int disassemble(ADDRESS pc, char buffer[]);
+// TODO: depends on architecture
+int popo_disassemble(U64 pc, char buffer[], void* insn);
 
 #endif /* ! DISAS_H */
