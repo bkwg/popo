@@ -1,15 +1,15 @@
-#ifndef POPO_TYPES_H
-#define POPO_TYPES_H
+#ifndef BK_TYPES_H
+#define BK_TYPES_H
 
-#include "popo_defines.h"
+#include "bk_defines.h"
 
 // TODO: add support for other platforms i.e Windows
 
 // Reference: https://sourceforge.net/p/predef/wiki/OperatingSystems/
 // Reference: https://sourceforge.net/p/predef/wiki/Compilers/
 
-#if defined(POPO_NO_LIBC)
-#   if defined(POPO_GNUC)
+#if defined(BK_NO_LIBC)
+#   if defined(BK_GNUC)
         typedef __UINT8_TYPE__   U8;
         typedef __UINT16_TYPE__  U16;
         typedef __UINT32_TYPE__  U32;
@@ -45,20 +45,24 @@
     typedef intptr_t  IPointer;
 #endif
 
-typedef enum _PopoBool {
-    POPO_FALSE,
-    POPO_TRUE
-} PopoBool;
+typedef U8  BkBool;
+typedef U32 BkStatus;
 
-typedef enum _PopoStatus {
-    POPO_STATUS_FAILURE,
-    POPO_STATUS_SUCCESS
-} PopoStatus;
+#define BK_TRUE     1
+#define BK_FALSE    0
 
-typedef struct _PopoArgs {
-    I32 pid;
-    char* image_path;
-} PopoArgs;
+#define BAD 0x80000000
+#define BK_CAST_STATUS(x, b) ((BkStatus) (b | x))
 
+#define BK_STATUS_SUCCESS BK_CAST_STATUS(0, 0)
+#define BK_STATUS_FAILURE BK_CAST_STATUS(1, BAD)
+#define BK_STATUS_BADFILE BK_CAST_STATUS(2, BAD)
+#define BK_STATUS_NULLARG BK_CAST_STATUS(3, BAD)
+#define BK_STATUS_BADARGS BK_CAST_STATUS(4, BAD)
+#define BK_STATUS_TRUE    BK_CAST_STATUS(5, 0)
+#define BK_STATUS_FALSE   BK_CAST_STATUS(6, BAD)
 
-#endif /* POPO_TYPES_H */
+#define BK_FAILURE(x) (x & BAD)
+#define BK_SUCCESS(x) (!(x & BAD))
+
+#endif

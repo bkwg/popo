@@ -1,6 +1,7 @@
 #include "banner.h"
 #include "args.h"
 #include "tracer.h"
+#include "bk_types.h"
 
 int main(int argc, char* argv[])
 {
@@ -8,8 +9,8 @@ int main(int argc, char* argv[])
 
     PopoArgs args = { 0 };
 
-    if (POPO_FAILURE(popo_parse_and_check_args(argc, argv, &args)))
-        return POPO_STATUS_FAILURE;
+    if (BK_FAILURE(popo_parse_and_check_args(argc, argv, &args)))
+        return BK_STATUS_BADARGS;
 
     return popo_launch(args);
 }

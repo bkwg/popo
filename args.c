@@ -1,5 +1,5 @@
 #include "argparse.h"
-#include "popo_types.h"
+#include "bk_types.h"
 #include "args.h"
 
 static struct argparse argparse = { 0 };
@@ -9,12 +9,12 @@ static const char* usages[] = {
     NULL,
 };
 
-static PopoStatus popo_check_args(PopoArgs* args)
+static BkStatus popo_check_args(PopoArgs* args)
 {
     if ((args->pid == 0)
         && (args->image_path == NULL))
-        return POPO_STATUS_FAILURE;
-    return POPO_STATUS_SUCCESS;
+        return BK_STATUS_BADARGS;
+    return BK_STATUS_SUCCESS;
 }
 
 static void popo_usage(void)
@@ -22,7 +22,7 @@ static void popo_usage(void)
     argparse_usage(&argparse);
 }
 
-PopoStatus popo_parse_and_check_args(int argc, char** argv, PopoArgs* args)
+BkStatus popo_parse_and_check_args(int argc, char** argv, PopoArgs* args)
 {
     // Init parser
     struct argparse_option options[] = {
@@ -51,11 +51,11 @@ PopoStatus popo_parse_and_check_args(int argc, char** argv, PopoArgs* args)
     // Check args. If wrong format, exit
     argc = argparse_parse(&argparse, argc, (const char**)argv);
 
-    if (POPO_FAILURE(popo_check_args(args)))
+    if (BK_FAILURE(popo_check_args(args)))
     {
         popo_usage();
-        return POPO_STATUS_FAILURE;
+        return BK_STATUS_BADARGS;
     }
 
-    return POPO_STATUS_SUCCESS;
+    return BK_STATUS_SUCCESS;
 }

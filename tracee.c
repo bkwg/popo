@@ -9,13 +9,13 @@
 
 */
 
-static PopoStatus run(const char* target_name)
+static BkStatus run(const char* target_name)
 {
     // all other flags are ignored
     if (ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
     {
         perror("ptrace TRACEME");
-        return POPO_STATUS_FAILURE;
+        return BK_STATUS_FAILURE;
     }
 
     // replace the current process image with a new process image (relies on
@@ -23,10 +23,12 @@ static PopoStatus run(const char* target_name)
     if (execl(target_name, target_name, (char*) NULL) == -1)
     {
         perror("execl");
-        return POPO_STATUS_FAILURE;
+        return BK_STATUS_FAILURE;
     }
 
-    return POPO_STATUS_SUCCESS;
+    puts("heroo");
+    puts("[+] Process started successfully\n");
+    return BK_STATUS_SUCCESS;
 }
 
 /*
